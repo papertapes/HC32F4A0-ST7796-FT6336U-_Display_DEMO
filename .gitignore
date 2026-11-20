@@ -1,0 +1,12 @@
+*.o
+*.axf
+*.hex
+*.map
+*.d
+*.lst
+MDK/Listings/
+MDK/output/
+*.uvguix.*
+JLinkLog.txt
+Thumbs.db
+Desktop.ini

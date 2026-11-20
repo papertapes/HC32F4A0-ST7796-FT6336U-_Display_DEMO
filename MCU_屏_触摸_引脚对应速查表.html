@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCU ↔ 屏 ↔ 电容触摸 引脚对应速查表 · HC32F4A0</title>
+<style>
+  :root{
+    --navy:#1F4E79; --navy-d:#163A5A; --blue:#2E75B6; --purple:#7030A0;
+    --teal:#0E8C8C; --gray:#5A6570; --amber:#B45309; --line:#D6DEE6;
+    --zebra:#F4F8FC; --yellow:#FFF2CC; --ink:#1B2836; --muted:#5A6B7B;
+    --ok:#1E7A46; --bg:#EAF0F6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI","Microsoft YaHei","PingFang SC",Arial,sans-serif;font-size:13px;line-height:1.55}
+  .wrap{max-width:1240px;margin:0 auto;padding:22px 18px 60px}
+  .hd{background:linear-gradient(135deg,var(--navy),var(--navy-d));color:#fff;border-radius:14px;padding:22px 26px;box-shadow:0 6px 18px rgba(31,78,121,.18)}
+  .hd h1{margin:0;font-size:21px;font-weight:600;letter-spacing:.3px}
+  .hd p{margin:6px 0 0;font-size:12.5px;color:#CFE0F0}
+  .chips{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.28);border-radius:20px;padding:4px 12px;font-size:12px;color:#fff}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:18px 0 6px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+  .bar button,.bar label.btn{cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:8px;padding:7px 13px;font-size:12.5px;font-weight:500;transition:.15s}
+  .bar button:hover,.bar label.btn:hover{border-color:var(--blue);color:var(--blue)}
+  .bar .primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .bar .primary:hover{background:#245F98;color:#fff}
+  .stat{margin-left:auto;font-size:12.5px;color:var(--muted)}
+  .stat b{color:var(--ok);font-size:15px}
+  .sec{background:#fff;border:1px solid var(--line);border-radius:12px;margin-top:16px;overflow:hidden;box-shadow:0 2px 8px rgba(20,40,60,.04)}
+  .sec-h{padding:10px 16px;color:#fff;font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:9px}
+  .sec-h .dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.85)}
+  .sec-h .tag{margin-left:auto;font-weight:400;font-size:11.5px;color:rgba(255,255,255,.85)}
+  table{width:100%;border-collapse:collapse}
+  thead th{background:#EDF2F7;color:#33465B;font-size:11.5px;font-weight:600;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0}
+  tbody td{padding:7px 10px;border-bottom:1px solid #EAF0F5;vertical-align:middle}
+  tbody tr:nth-child(even){background:var(--zebra)}
+  tbody tr.done{background:#E7F4EC}
+  tbody tr.done td{color:#2A5E41}
+  tbody tr:hover{background:#E3EEF8}
+  .ck{width:16px;height:16px;cursor:pointer;accent-color:var(--ok)}
+  .mcu{font-weight:600;color:var(--navy)}
+  .pin{font-family:Consolas,"Courier New",monospace;font-weight:600}
+  .num{font-family:Consolas,"Courier New",monospace;color:var(--muted);width:26px;text-align:center}
+  .fn{font-family:Consolas,"Courier New",monospace;font-size:11.5px;color:#43536B}
+  .hi{background:var(--yellow);padding:1px 5px;border-radius:4px;color:#7A4B00}
+  .nc{color:#9AA6B2;font-style:italic}
+  .note{font-size:11.5px;color:var(--muted)}
+  .scroll{overflow-x:auto}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin:14px 2px 0;font-size:11.5px;color:var(--muted)}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  .tips{margin-top:18px;background:#FFF9E9;border:1px solid #EAD9A6;border-radius:12px;padding:14px 18px}
+  .tips h3{margin:0 0 8px;font-size:13.5px;color:#7A4B00}
+  .tips ol{margin:0;padding-left:20px;color:#5C4A22}
+  .tips li{margin:4px 0}
+  .foot{margin-top:16px;font-size:11px;color:var(--muted);text-align:center;line-height:1.7}
+  @media print{
+    body{background:#fff}
+    .wrap{max-width:none;padding:0}
+    .bar{display:none}
+    .hd{box-shadow:none;border-radius:0}
+    .sec{break-inside:avoid;box-shadow:none}
+    thead th{position:static}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd">
+    <h1>HC32F4A0 ↔ 4.0" 屏 ↔ 电容触摸 引脚对应速查表</h1>
+    <p>以 MCU 引脚为主键，横向对齐转接板 34PIN、屏本体 40PIN、电容触摸 6PIN。勾选"已接"后自动保存到本机，可打印带去焊板。</p>
+    <div class="chips">
+      <span class="chip">屏驱固定 ST7796 · 320×480 · 8080 16bit</span>
+      <span class="chip">触摸 FT6336U @ 0x38 · I2C1</span>
+      <span class="chip">最终方案：转接板 34PIN</span>
+      <span class="chip">LQFP176 · 物理脚号可直接焊接</span>
+    </div>
+  </div>
+
+  <div class="bar">
+    <button class="primary" onclick="window.print()">打印 / 存为 PDF</button>
+    <button onclick="selAll(true)">全部标记已接</button>
+    <button onclick="selAll(false)">清空标记</button>
+    <button onclick="exportList()">导出已接清单</button>
+    <span class="stat">已接 <b id="cnt">0</b> / <span id="tot">0</span> 根信号</span>
+  </div>
+
+  <!-- A 控制线 -->
+  <div class="sec">
+    <div class="sec-h" style="background:var(--blue)"><span class="dot"></span>A · 8080 并口 — 控制线<span class="tag">EXMC SMC · GPIO_FUNC_12 · SMC Chip3</span></div>
+    <div class="scroll"><table>
+      <thead><tr><th></th><th>#</th><th>信号</th><th>MCU GPIO</th><th>LQFP176</th><th>复用功能</th><th>转接板 34PIN</th><th>屏本体 40PIN</th><th>电容 6PIN</th><th>接线说明</th></tr></thead>
+      <tbody>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">1</td><td class="pin">/CS</td><td class="mcu">PG12</td><td class="pin">155</td><td class="fn">FUNC12 · EXMC_CE3</td><td class="pin">1 CS</td><td class="pin">9 /CS</td><td class="nc">—</td><td class="note">SMC Chip3；开发板 R135 10 kΩ 上拉</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">2</td><td class="pin">RS</td><td class="mcu">PG2</td><td class="pin">106</td><td class="fn">FUNC12 · EXMC_ADD12 (A12)</td><td class="pin">2 RS</td><td class="pin">10 RS</td><td class="nc">—</td><td class="note">命令口 <span class="fn">0x60001FFE</span> / 数据口 <span class="fn">0x60002000</span></td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">3</td><td class="pin">/WR</td><td class="mcu">PC0</td><td class="pin">32</td><td class="fn">FUNC12 · EXMC_WE</td><td class="pin">3 WR</td><td class="pin">11 /WR</td><td class="nc">—</td><td class="note">写使能，低有效</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">4</td><td class="pin">/RD</td><td class="mcu">PF11</td><td class="pin">59</td><td class="fn">FUNC12 · EXMC_OE</td><td class="pin">4 RD</td><td class="pin">12 /RD</td><td class="nc">—</td><td class="note"><span class="hi">建议接</span>；固定 ST7796 后不读 ID，非必需</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- B 数据总线 -->
+  <div class="sec">
+    <div class="sec-h" style="background:var(--blue)"><span class="dot"></span>B · 8080 并口 — 16 位数据总线 DB0~DB15<span class="tag">位号必须一一对应，禁止交叉</span></div>
+    <div class="scroll"><table>
+      <thead><tr><th></th><th>#</th><th>信号</th><th>MCU GPIO</th><th>LQFP176</th><th>复用功能</th><th>转接板 34PIN</th><th>屏本体 40PIN</th><th>电容 6PIN</th><th>接线说明</th></tr></thead>
+      <tbody>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">5</td><td class="pin">DB0</td><td class="mcu">PD14</td><td class="pin">104</td><td class="fn">DATA0</td><td class="pin">6</td><td class="pin">17</td><td class="nc">—</td><td class="note">EXMC_DATA0</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">6</td><td class="pin">DB1</td><td class="mcu">PD15</td><td class="pin">105</td><td class="fn">DATA1</td><td class="pin">7</td><td class="pin">18</td><td class="nc">—</td><td class="note">EXMC_DATA1</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">7</td><td class="pin">DB2</td><td class="mcu">PD0</td><td class="pin">142</td><td class="fn">DATA2</td><td class="pin">8</td><td class="pin">19</td><td class="nc">—</td><td class="note">EXMC_DATA2</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">8</td><td class="pin">DB3</td><td class="mcu">PD1</td><td class="pin">143</td><td class="fn">DATA3</td><td class="pin">9</td><td class="pin">20</td><td class="nc">—</td><td class="note">EXMC_DATA3</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">9</td><td class="pin">DB4</td><td class="mcu">PE7</td><td class="pin">68</td><td class="fn">DATA4</td><td class="pin">10</td><td class="pin">21</td><td class="nc">—</td><td class="note">EXMC_DATA4</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">10</td><td class="pin">DB5</td><td class="mcu">PE8</td><td class="pin">69</td><td class="fn">DATA5</td><td class="pin">11</td><td class="pin">22</td><td class="nc">—</td><td class="note">EXMC_DATA5</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">11</td><td class="pin">DB6</td><td class="mcu">PE9</td><td class="pin">70</td><td class="fn">DATA6</td><td class="pin">12</td><td class="pin">23</td><td class="nc">—</td><td class="note">EXMC_DATA6</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">12</td><td class="pin">DB7</td><td class="mcu">PE10</td><td class="pin">73</td><td class="fn">DATA7</td><td class="pin">13</td><td class="pin">24</td><td class="nc">—</td><td class="note">EXMC_DATA7；8bit 模式只用到这里</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">13</td><td class="pin">DB8</td><td class="mcu">PE11</td><td class="pin">74</td><td class="fn">DATA8</td><td class="pin">14</td><td class="pin">25</td><td class="nc">—</td><td class="note">EXMC_DATA8</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">14</td><td class="pin">DB9</td><td class="mcu">PE12</td><td class="pin">75</td><td class="fn">DATA9</td><td class="pin">15</td><td class="pin">26</td><td class="nc">—</td><td class="note">EXMC_DATA9</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">15</td><td class="pin">DB10</td><td class="mcu">PE13</td><td class="pin">76</td><td class="fn">DATA10</td><td class="pin">16</td><td class="pin">27</td><td class="nc">—</td><td class="note">EXMC_DATA10</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">16</td><td class="pin">DB11</td><td class="mcu">PE14</td><td class="pin">77</td><td class="fn">DATA11</td><td class="pin">17</td><td class="pin">28</td><td class="nc">—</td><td class="note">EXMC_DATA11</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">17</td><td class="pin">DB12</td><td class="mcu">PE15</td><td class="pin">78</td><td class="fn">DATA12</td><td class="pin">18</td><td class="pin">29</td><td class="nc">—</td><td class="note">EXMC_DATA12</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">18</td><td class="pin">DB13</td><td class="mcu">PD8</td><td class="pin">96</td><td class="fn">DATA13</td><td class="pin">19</td><td class="pin">30</td><td class="nc">—</td><td class="note">EXMC_DATA13</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">19</td><td class="pin">DB14</td><td class="mcu">PD9</td><td class="pin">97</td><td class="fn">DATA14</td><td class="pin">20</td><td class="pin">31</td><td class="nc">—</td><td class="note">EXMC_DATA14</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">20</td><td class="pin">DB15</td><td class="mcu">PD10</td><td class="pin">98</td><td class="fn">DATA15</td><td class="pin">21</td><td class="pin">32</td><td class="nc">—</td><td class="note">EXMC_DATA15</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- C LCD 控制与背光 -->
+  <div class="sec">
+    <div class="sec-h" style="background:var(--purple)"><span class="dot"></span>C · LCD 复位与背光<span class="tag">普通 GPIO 输出</span></div>
+    <div class="scroll"><table>
+      <thead><tr><th></th><th>#</th><th>信号</th><th>MCU GPIO</th><th>LQFP176</th><th>复用功能</th><th>转接板 34PIN</th><th>屏本体 40PIN</th><th>电容 6PIN</th><th>接线说明</th></tr></thead>
+      <tbody>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">21</td><td class="pin">/RESET</td><td class="mcu">PI1</td><td class="pin">132</td><td class="fn">GPIO 输出</td><td class="pin">5 RST</td><td class="pin">15 /RESET</td><td class="nc">—</td><td class="note">低有效；上电拉低 ≥120 ms</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">22</td><td class="pin">BL</td><td class="mcu">PI0</td><td class="pin">131</td><td class="fn">GPIO 输出</td><td class="pin">23 BL</td><td class="pin">33 LEDA / 34~36 LEDK（外驱）</td><td class="nc">—</td><td class="note"><span class="hi">高电平点亮</span>；转接板板载驱动，无需外部 NMOS</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- D 触摸 -->
+  <div class="sec">
+    <div class="sec-h" style="background:var(--teal)"><span class="dot"></span>D · 电容触摸 I2C（FT6336U @ 0x38）<span class="tag">I2C1 · 100 kHz · SDA/SCL 各 4.7 kΩ 上拉到 3V3</span></div>
+    <div class="scroll"><table>
+      <thead><tr><th></th><th>#</th><th>信号</th><th>MCU GPIO</th><th>LQFP176</th><th>复用功能</th><th>转接板 34PIN</th><th>屏本体 40PIN</th><th>电容 6PIN</th><th>接线说明</th></tr></thead>
+      <tbody>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">23</td><td class="pin">CT_SDA</td><td class="mcu">PF10</td><td class="pin">28</td><td class="fn">FUNC48 · I2C1_SDA</td><td class="pin">30 SDA (MOSI)</td><td class="nc">—</td><td class="pin">2 SDA</td><td class="note">开发板 R80 100 Ω 串接</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">24</td><td class="pin">CT_SCL</td><td class="mcu">PD3</td><td class="pin">145</td><td class="fn">FUNC49 · I2C1_SCL</td><td class="pin">34 SCL (CLK)</td><td class="nc">—</td><td class="pin">3 SCL</td><td class="note">开发板 R82 100 Ω 串接</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">25</td><td class="pin">CT_INT</td><td class="mcu">PI4</td><td class="pin">173</td><td class="fn">GPIO 输入</td><td class="pin">31 INT (T_PEN)</td><td class="nc">—</td><td class="pin">4 INT</td><td class="note">轮询模式可不接；开发板 R137</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">26</td><td class="pin">CT_RST</td><td class="mcu">PI2</td><td class="pin">133</td><td class="fn">GPIO 输出</td><td class="pin">33 RST (T_CS)</td><td class="nc">—</td><td class="pin">5 RST</td><td class="note">低有效触摸复位；开发板 R138</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- E 串口 -->
+  <div class="sec">
+    <div class="sec-h" style="background:var(--gray)"><span class="dot"></span>E · 调试串口（可选）<span class="tag">输出面板 ID / 触摸在线状态</span></div>
+    <div class="scroll"><table>
+      <thead><tr><th></th><th>#</th><th>信号</th><th>MCU GPIO</th><th>LQFP176</th><th>复用功能</th><th>转接板 34PIN</th><th>屏本体 40PIN</th><th>电容 6PIN</th><th>接线说明</th></tr></thead>
+      <tbody>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">27</td><td class="pin">TX</td><td class="mcu">PH15</td><td class="pin">130</td><td class="fn">FUNC32 · USART1_TX</td><td class="nc">—</td><td class="nc">—</td><td class="nc">—</td><td class="note">115200-8-N-1；无引出可删 BSP_PRINTF_Init()</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- F 电源与地 -->
+  <div class="sec">
+    <div class="sec-h" style="background:var(--amber)"><span class="dot"></span>F · 电源与地<span class="tag">非 MCU GPIO · 注意 5 V 与 3.3 V 分离</span></div>
+    <div class="scroll"><table>
+      <thead><tr><th></th><th>#</th><th>信号</th><th>接到</th><th>转接板 34PIN</th><th>屏本体 40PIN</th><th>电容 6PIN</th><th>接线说明</th></tr></thead>
+      <tbody>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">28</td><td class="pin">3V3 逻辑电源</td><td class="mcu">3.3 V</td><td class="pin">24, 25 VDD3.3</td><td class="pin">6 IOVCC · 7 VCC</td><td class="pin">1 VCC</td><td class="note">2.8~3.3 V；就近 100 nF + 10 µF 退耦</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">29</td><td class="pin">+5V 背光供电</td><td class="mcu">外部 +5 V</td><td class="pin">28 VCC5 / BL_VDD</td><td class="pin">33 LEDA（经驱动）</td><td class="nc">—</td><td class="note"><span class="hi">必须供 5 V，禁止接 MCU IO</span>，勿与 24/25 的 3.3 V 混接</td></tr>
+        <tr><td><input type="checkbox" class="ck"></td><td class="num">30</td><td class="pin">GND</td><td class="mcu">GND</td><td class="pin">22, 26, 27</td><td class="pin">5, 16, 37</td><td class="pin">6 GND</td><td class="note">全部共地</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- G 空脚 -->
+  <div class="sec">
+    <div class="sec-h" style="background:#8A97A3"><span class="dot"></span>G · 空脚 / 不接<span class="tag">电容屏方案下悬空</span></div>
+    <div class="scroll"><table>
+      <thead><tr><th>位置</th><th>名称</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td class="pin">转接板 29</td><td class="pin">MISO</td><td class="note"><span class="nc">电容版 NC</span>，悬空；符号图上的电阻屏 SPI 名称不适用</td></tr>
+        <tr><td class="pin">转接板 32</td><td class="pin">MO</td><td class="note"><span class="nc">电容版 NC</span>，开发板 J30 画 X 悬空</td></tr>
+        <tr><td class="pin">屏本体 1~4</td><td class="pin">XL/YU/XR/YD</td><td class="note"><span class="nc">不接</span>；电阻触摸四线，本方案电容触摸</td></tr>
+        <tr><td class="pin">屏本体 8</td><td class="pin">NC/FMARK</td><td class="note"><span class="nc">不接</span>；帧同步，本工程未用</td></tr>
+        <tr><td class="pin">屏本体 13/14</td><td class="pin">SDA/SDO</td><td class="note"><span class="nc">不接</span>；SPI 模式专用，并口模式不用</td></tr>
+        <tr><td class="pin">屏本体 38~40</td><td class="pin">IM0/IM1/IM2</td><td class="note">模组厂上下拉决定，<span class="hi">须确认已配成 8080 16bit</span>，不接 MCU</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="tips">
+    <h3>上板前五点注意</h3>
+    <ol>
+      <li>28 脚 <b>VCC5 / BL_VDD 单独供 5 V</b>（背光 LED），与 24/25 的 3.3 V 分离，绝不接 MCU IO。</li>
+      <li>23 脚 BL <b>高电平点亮</b>，接 PI0；转接板板载驱动，删掉屏本体直连时代的外部 NMOS + 限流。</li>
+      <li>29 / 32 脚电容版是空脚，别按符号图当 SPI 接；30 SDA / 34 SCL 各加 4.7 kΩ 上拉 + 建议 100 Ω 串阻。</li>
+      <li>DB0~DB15（6~21 脚）位号一一对应，交叉会导致颜色/命令全错。</li>
+      <li>屏驱已<b>固定 ST7796</b>，上电不读 ID；若白屏先看 IM[2:0] 是否为 8080-16bit、再量 /RESET 低 ≥120 ms。</li>
+    </ol>
+  </div>
+
+  <div class="legend">
+    <span><i style="background:var(--blue)"></i>8080 并口</span>
+    <span><i style="background:var(--purple)"></i>复位 / 背光</span>
+    <span><i style="background:var(--teal)"></i>电容触摸 I2C</span>
+    <span><i style="background:var(--gray)"></i>调试串口</span>
+    <span><i style="background:var(--amber)"></i>电源 / 地</span>
+    <span><i style="background:var(--yellow)"></i>重点强调</span>
+  </div>
+
+  <div class="foot">
+    依据：DS_HC32F4A0 Rev1.60 第 36 / 45~48 页 · RM Rev1.50 第 40 章 · 鸿讯 40001 转接板手册第 3 页 · 开发板 J30 原理图<br>
+    勾选状态仅保存在本机浏览器（localStorage）。本表为接线参考，未做硬件实测。
+  </div>
+</div>
+
+<script>
+(function(){
+  var KEY='hcf4a0_pinmap_v1';
+  var boxes=[].slice.call(document.querySelectorAll('.ck'));
+  function save(){
+    var a=boxes.map(function(b){return b.checked?1:0;});
+    try{localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}
+  }
+  function load(){
+    try{
+      var a=JSON.parse(localStorage.getItem(KEY)||'null');
+      if(a&&a.length===boxes.length){boxes.forEach(function(b,i){b.checked=!!a[i];});}
+    }catch(e){}
+  }
+  function paint(b){b.closest('tr').classList.toggle('done',b.checked);}
+  function count(){
+    var n=boxes.filter(function(b){return b.checked;}).length;
+    document.getElementById('cnt').textContent=n;
+    document.getElementById('tot').textContent=boxes.length;
+  }
+  boxes.forEach(function(b){
+    b.addEventListener('change',function(){paint(b);count();save();});
+    paint(b);
+  });
+  load();
+  boxes.forEach(paint);
+  count();
+  window.selAll=function(v){boxes.forEach(function(b){b.checked=v;paint(b);});count();save();};
+  window.exportList=function(){
+    var rows=boxes.filter(function(b){return b.checked;}).map(function(b){
+      var t=[].slice.call(b.closest('tr').cells).slice(1).map(function(c){return c.innerText.trim();});
+      return t.join(' | ');
+    });
+    var txt=rows.length?rows.join('\n'):'（未勾选任何信号）';
+    var blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='已接引脚清单.txt';a.click();URL.revokeObjectURL(a.href);
+  };
+})();
+</script>
+</body>
+</html>
